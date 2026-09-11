@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f7f4ee">
+<title>감정평가 데일리 스낵</title>
+<style>
+  :root{
+    --bg:#f7f4ee; --card:#fffdf9; --text:#24211d; --muted:#817a70;
+    --line:#e8e1d7; --accent:#c56b3c; --soft:#f3e6dc;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+       font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+       line-height:1.65}
+  .wrap{max-width:680px;margin:0 auto;padding:28px 18px 60px}
+  header{padding:18px 4px 28px}
+  .eyebrow{font-size:13px;font-weight:700;letter-spacing:.08em;color:var(--accent)}
+  h1{font-size:29px;line-height:1.25;margin:8px 0 8px;letter-spacing:-.04em}
+  .intro{margin:0;color:var(--muted);font-size:14px}
+  .snack{background:var(--card);border:1px solid var(--line);border-radius:22px;
+         padding:24px 21px;margin:0 0 18px;box-shadow:0 6px 20px rgba(50,40,30,.05)}
+  .date{font-size:13px;color:var(--muted);margin-bottom:8px}
+  .tag{display:inline-block;background:var(--soft);color:#92502f;border-radius:999px;
+       padding:4px 9px;font-size:12px;font-weight:700;margin-bottom:10px}
+  h2{font-size:22px;line-height:1.38;letter-spacing:-.035em;margin:4px 0 16px}
+  p{font-size:16px;margin:10px 0}
+  .key{margin:20px 0 14px;padding:15px 16px;border-left:4px solid var(--accent);
+       background:#fbf1e9;border-radius:0 12px 12px 0}
+  .key strong{display:block;font-size:12px;color:var(--accent);margin-bottom:3px}
+  .source{display:inline-flex;align-items:center;gap:7px;margin-top:8px;
+          padding:11px 14px;border:1px solid var(--line);border-radius:12px;
+          color:var(--text);text-decoration:none;font-weight:700;font-size:14px}
+  .source:active{transform:scale(.98)}
+  footer{text-align:center;color:var(--muted);font-size:12px;padding:18px 0}
+  @media (prefers-color-scheme:dark){
+    :root{--bg:#171513;--card:#211e1b;--text:#f4eee7;--muted:#aaa097;--line:#39332e;--soft:#38291f}
+    .key{background:#30241e}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">REAL ESTATE APPRAISAL · DAILY</div>
+    <h1>감정평가 데일리 스낵 🥨</h1>
+    <p class="intro">하루에 하나만. 최신 이슈를 가볍게 읽고, 감정평가와 연결해 보기.</p>
+  </header>
+
+  <!-- 최신 스낵을 아래 형식으로 맨 위에 추가하세요. -->
+  <article class="snack">
+    <div class="date">2026. 09. 11</div>
+    <div class="tag">오늘의 스낵 · 예시</div>
+    <h2>“뉴스를 읽는 게 아니라, 감정평가와 연결해서 본다.”</h2>
+    <p>
+      이 페이지는 매일 하나의 최신 이슈만 골라서 가볍게 보는 공간입니다.
+      기사 전체를 공부하려는 게 아니라, “어? 이게 감정평가랑 연결되네?”라는
+      포인트 하나만 챙기는 게 목적이에요.
+    </p>
+    <div class="key">
+      <strong>💡 오늘의 한 줄</strong>
+      뉴스 하나를 깊게 파기보다, 감정평가와 연결되는 변수 하나를 발견한다.
+    </div>
+    <a class="source" href="#" onclick="return false;">📰 원문 기사 보기</a>
+  </article>
+
+  <footer>오늘의 스낵만 가볍게 🍪</footer>
+</div>
+</body>
+</html>
