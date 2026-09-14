@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f7f4ee">
+<title>감정평가 데일리 스낵</title>
+<style>
+  :root{
+    --bg:#f7f4ee; --card:#fffdf9; --text:#24211d; --muted:#817a70;
+    --line:#e8e1d7; --accent:#c56b3c; --soft:#f3e6dc;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+       font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+       line-height:1.65}
+  .wrap{max-width:680px;margin:0 auto;padding:28px 18px 60px}
+  header{padding:18px 4px 28px}
+  .eyebrow{font-size:13px;font-weight:700;letter-spacing:.08em;color:var(--accent)}
+  h1{font-size:29px;line-height:1.25;margin:8px 0 8px;letter-spacing:-.04em}
+  .intro{margin:0;color:var(--muted);font-size:14px}
+  .status{margin-top:10px;font-size:12px;color:var(--muted)}
+  .snack{background:var(--card);border:1px solid var(--line);border-radius:22px;
+         padding:24px 21px;margin:0 0 18px;box-shadow:0 6px 20px rgba(50,40,30,.05)}
+  .date{font-size:13px;color:var(--muted);margin-bottom:8px}
+  .tag{display:inline-block;background:var(--soft);color:#92502f;border-radius:999px;
+       padding:4px 9px;font-size:12px;font-weight:700;margin-bottom:10px}
+  h2{font-size:22px;line-height:1.38;letter-spacing:-.035em;margin:4px 0 16px}
+  p{font-size:16px;margin:10px 0}
+  .key{margin:20px 0 14px;padding:15px 16px;border-left:4px solid var(--accent);
+       background:#fbf1e9;border-radius:0 12px 12px 0}
+  .key strong{display:block;font-size:12px;color:var(--accent);margin-bottom:3px}
+  .source{display:inline-flex;align-items:center;gap:7px;margin-top:8px;
+          padding:11px 14px;border:1px solid var(--line);border-radius:12px;
+          color:var(--text);text-decoration:none;font-weight:700;font-size:14px}
+  .source:active{transform:scale(.98)}
+  .empty{text-align:center;padding:30px 10px;color:var(--muted)}
+  footer{text-align:center;color:var(--muted);font-size:12px;padding:18px 0}
+  @media (prefers-color-scheme:dark){
+    :root{--bg:#171513;--card:#211e1b;--text:#f4eee7;--muted:#aaa097;--line:#39332e;--soft:#38291f}
+    .key{background:#30241e}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">REAL ESTATE APPRAISAL · DAILY</div>
+    <h1>감정평가 데일리 스낵 🥨</h1>
+    <p class="intro">하루에 하나만. 최신 이슈를 가볍게 읽고, 감정평가와 연결해 보기.</p>
+    <div class="status" id="status">최신 스낵을 불러오는 중…</div>
+  </header>
+
+  <main id="snacks"></main>
+
+  <footer>오늘의 스낵만 가볍게 🍪</footer>
+</div>
+
+<script>
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, ch => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;"
+  }[ch]));
+}
+
+function renderSnack(snack) {
+  const source = snack.source_url
+    ? `<a class="source" href="${escapeHTML(snack.source_url)}" target="_blank" rel="noopener noreferrer">📰 원문 기사 보기</a>`
+    : "";
+
+  return `
+    <article class="snack">
+      <div class="date">${escapeHTML(snack.date)}</div>
+      <div class="tag">${escapeHTML(snack.tag)}</div>
+      <h2>${escapeHTML(snack.title)}</h2>
+      <p>${escapeHTML(snack.body)}</p>
+      <div class="key">
+        <strong>💡 오늘의 한 줄</strong>
+        ${escapeHTML(snack.key)}
+      </div>
+      ${source}
+    </article>
+  `;
+}
+
+async function loadSnacks() {
+  const status = document.querySelector("#status");
+  const container = document.querySelector("#snacks");
+
+  try {
+    // timestamp를 붙여 GitHub Pages/CDN의 오래된 news.json 캐시를 피합니다.
+    const response = await fetch(`data/news.json?v=${Date.now()}`, { cache: "no-store" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+    const data = await response.json();
+    const snacks = Array.isArray(data.snacks) ? data.snacks : [];
+
+    if (!snacks.length) {
+      container.innerHTML = `<div class="empty">아직 스낵이 없습니다.</div>`;
+      status.textContent = "스낵 준비 중";
+      return;
+    }
+
+    container.innerHTML = snacks.map(renderSnack).join("");
+
+    const updated = data.generated_at
+      ? new Date(data.generated_at).toLocaleString("ko-KR", {
+          timeZone: "Asia/Seoul",
+          year: "numeric", month: "2-digit", day: "2-digit",
+          hour: "2-digit", minute: "2-digit"
+        })
+      : "";
+
+    status.textContent = updated ? `마지막 업데이트 · ${updated}` : "최신 스낵";
+  } catch (error) {
+    console.error(error);
+    container.innerHTML = `
+      <div class="empty">
+        스낵을 불러오지 못했어요.<br>
+        잠시 후 다시 새로고침해 주세요.
+      </div>`;
+    status.textContent = "업데이트 확인 중";
+  }
+}
+
+loadSnacks();
+</script>
+</body>
+</html>
