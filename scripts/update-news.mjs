@@ -5,19 +5,25 @@ if (!API_KEY) throw new Error("OPENAI_API_KEY secret이 없습니다.");
 
 const DATA_PATH = "data/news.json";
 const existing = JSON.parse(await fs.readFile(DATA_PATH, "utf8"));
-const recentTitles = (existing.snacks || []).slice(0, 14).map(x => x.title);
+const recentTitles = (existing.snacks || [])
+  .slice(0, 14)
+  .map(x => x.title);
 
 const today = new Intl.DateTimeFormat("ko-KR", {
   timeZone: "Asia/Seoul",
   year: "numeric",
   month: "2-digit",
   day: "2-digit"
-}).format(new Date()).replaceAll(". ", ".").replace(/\.$/, "");
+})
+  .format(new Date())
+  .replaceAll(". ", ".")
+  .replace(/\.$/, "");
 
 const prompt = `
 오늘은 ${today}입니다.
 
 너는 '감정평가 데일리 스낵'의 편집자다.
+
 한국의 최신 부동산·토지·주택·재개발·재건축·도시정비·세금·금리·금융·인프라·공시지가·감정평가·보상·판례·부동산 정책 관련 뉴스 중,
 감정평가를 공부하는 사람이 읽으면 "이게 감정평가와 이렇게 연결되는구나"라고 느낄 만한 이슈 1개를 골라라.
 
@@ -48,7 +54,14 @@ const schema = {
     key: { type: "string" },
     source_url: { type: "string" }
   },
-  required: ["date", "tag", "title", "body", "key", "source_url"],
+  required: [
+    "date",
+    "tag",
+    "title",
+    "body",
+    "key",
+    "source_url"
+  ],
   additionalProperties: false
 };
 
@@ -61,8 +74,15 @@ const response = await fetch("https://api.openai.com/v1/responses", {
   body: JSON.stringify({
     model: "gpt-5.6-luna",
     store: false,
-    tools: [{ type: "web_search" }],
+
+    tools: [
+      {
+        type: "web_search"
+      }
+    ],
+
     input: prompt,
+
     text: {
       format: {
         type: "json_schema",
@@ -76,11 +96,55 @@ const response = await fetch("https://api.openai.com/v1/responses", {
 
 if (!response.ok) {
   const errorText = await response.text();
-  throw new Error(`OpenAI API 오류 ${response.status}: ${errorText}`);
+  throw new Error(
+    `OpenAI API 오류 ${response.status}: ${errorText}`
+  );
 }
 
 const result = await response.json();
-const snack = JSON.parse(result.output_text);
+
+/*
+ * Responses API 결과를 안전하게 추출한다.
+ * output_text가 없는 경우 실제 output 배열을 확인한다.
+ */
+let outputText = result.output_text;
+
+if (!outputText && Array.isArray(result.output)) {
+  for (const item of result.output) {
+    if (!Array.isArray(item.content)) continue;
+
+    for (const content of item.content) {
+      if (content.type === "output_text" && content.text) {
+        outputText = content.text;
+        break;
+      }
+    }
+
+    if (outputText) break;
+  }
+}
+
+if (!outputText) {
+  console.error(
+    "OpenAI 응답 전체:",
+    JSON.stringify(result, null, 2)
+  );
+
+  throw new Error(
+    "OpenAI 응답에서 JSON 텍스트를 찾지 못했습니다."
+  );
+}
+
+let snack;
+
+try {
+  snack = JSON.parse(outputText);
+} catch (error) {
+  console.error("OpenAI가 반환한 값:", outputText);
+  throw new Error(
+    `OpenAI 응답 JSON 파싱 실패: ${error.message}`
+  );
+}
 
 const cleaned = {
   date: snack.date,
@@ -96,5 +160,10 @@ const next = {
   snacks: [cleaned, ...(existing.snacks || [])].slice(0, 60)
 };
 
-await fs.writeFile(DATA_PATH, JSON.stringify(next, null, 2) + "\n", "utf8");
+await fs.writeFile(
+  DATA_PATH,
+  JSON.stringify(next, null, 2) + "\n",
+  "utf8"
+);
+
 console.log(`새 스낵 생성 완료: ${cleaned.title}`);
