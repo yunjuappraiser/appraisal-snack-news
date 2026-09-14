@@ -1,6 +1,14 @@
 {
-  "generated_at": "2026-09-14T00:48:29.511Z",
+  "generated_at": "2026-09-14T01:05:26.933Z",
   "snacks": [
+    {
+      "date": "2026-09-14",
+      "tag": "토지·공공비축",
+      "title": "공공이 사들이는 땅, 왜 ‘개발 가능성’부터 다시 따질까",
+      "body": "국토교통부가 5,000억 원 규모로 서울·경기·인천의 공동주택 건설 가능 토지 중 3,300㎡ 이상을 공공비축용으로 매입한다. 대상 토지는 사전컨설팅과 적격성 검토 뒤 측량감평을 거쳐 가격협의에 들어간다. 여기서 중요한 점은 ‘아파트를 지을 수 있다’는 사실만으로 토지가 곧바로 완성된 주택사업용지 가격이 되는 것은 아니라는 것이다. 감정평가에서는 현재의 법적 이용가능성, 실제 사업화까지의 기간과 비용, 인허가·시장 위험을 반영해 개발이익 중 토지에 귀속될 몫을 가려내야 한다. ([korea.kr](https://www.korea.kr/multi/visualNewsView.do?newsId=148971740&pWiseMinistry=ministryNews&repCode=A00006&repCodeType=%EC%A0%95%EB%B6%80%EB%B6%80%EC%B2%98))",
+      "key": "개발 가능성은 토지가치를 높이지만, 개발비용·기간·위험을 차감한 잔여이익만이 토지가격으로 귀속된다.",
+      "source_url": "https://www.korea.kr/multi/visualNewsView.do?newsId=148971740&pWiseMinistry=ministryNews&repCode=A00006&repCodeType=%EC%A0%95%EB%B6%80%EB%B6%80처"
+    },
     {
       "date": "2026-09-14",
       "tag": "공공비축토지·측량감평",
