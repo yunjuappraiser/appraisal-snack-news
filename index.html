@@ -49,7 +49,7 @@
   </header>
 
   <!-- 최신 스낵을 아래 형식으로 맨 위에 추가하세요. -->
-  <article class="snack">
+  <!-- <article class="snack">
     <div class="date">2026. 09. 11</div>
     <div class="tag">오늘의 스낵 · 예시</div>
     <h2>“뉴스를 읽는 게 아니라, 감정평가와 연결해서 본다.”</h2>
@@ -63,8 +63,78 @@
       뉴스 하나를 깊게 파기보다, 감정평가와 연결되는 변수 하나를 발견한다.
     </div>
     <a class="source" href="#" onclick="return false;">📰 원문 기사 보기</a>
-  </article>
+  </article> -->
+  <main id="snacks"></main>
 
+  <footer>최근 스낵을 가볍게 🍪</footer>
+  
+  <script>
+  async function loadSnacks() {
+    const container = document.getElementById("snacks");
+  
+    try {
+      const response = await fetch("data/news.json");
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+  
+      const data = await response.json();
+  
+      container.innerHTML = data.snacks.map(snack => {
+        const date = snack.date.replaceAll("-", ". ");
+  
+        return `
+          <article class="snack">
+            <div class="date">${date}</div>
+            <div class="tag">${escapeHtml(snack.tag)}</div>
+            <h2>${escapeHtml(snack.title)}</h2>
+            <p>${escapeHtml(snack.body)}</p>
+  
+            <div class="key">
+              <strong>💡 오늘의 한 줄</strong>
+              ${escapeHtml(snack.key)}
+            </div>
+  
+            ${
+              snack.source_url
+                ? `<a class="source"
+                     href="${escapeAttribute(snack.source_url)}"
+                     target="_blank"
+                     rel="noopener">
+                     📰 원문 기사 보기
+                   </a>`
+                : ""
+            }
+          </article>
+        `;
+      }).join("");
+  
+    } catch (error) {
+      console.error(error);
+      container.innerHTML = `
+        <article class="snack">
+          <h2>스낵을 불러오지 못했어요.</h2>
+          <p>잠시 후 다시 열어주세요.</p>
+        </article>
+      `;
+    }
+  }
+  
+  function escapeHtml(value = "") {
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+  
+  function escapeAttribute(value = "") {
+    return String(value).replaceAll('"', "&quot;");
+  }
+  
+  loadSnacks();
+  </script>
   <footer>오늘의 스낵만 가볍게 🍪</footer>
 </div>
 </body>
